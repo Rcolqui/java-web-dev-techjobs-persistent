@@ -44,6 +44,8 @@ public class ListController {
 
     @RequestMapping("")
     public String list(Model model) {
+        model.addAttribute("skills", skillRepository.findAll());
+        model.addAttribute("employers", employerRepository.findAll());
 
         return "list";
     }
@@ -52,27 +54,16 @@ public class ListController {
     public String listJobsByColumnAndValue(Model model, @RequestParam String column, @RequestParam String value) {
 
         Iterable<Job> jobs;
-        Iterable<Skill> skills;
-        Iterable<Employer> employers;
 
         if (column.toLowerCase().equals("all")){
             jobs = jobRepository.findAll();
             model.addAttribute("title", "All Jobs");
         }
-        if (column.toLowerCase().equals("employer")){
-            employers = employerRepository.findAll();
-            model.addAttribute("title", "All Employers");
-        }
-        if (column.toLowerCase().equals("skill")){
-            skills = skillRepository.findAll();
-            model.addAttribute("title", "All Skills");
-        } else {
+        else {
             jobs = JobData.findByColumnAndValue(column, value, jobRepository.findAll());
             model.addAttribute("title", "Jobs with " + columnChoices.get(column) + ": " + value);
         }
         model.addAttribute("jobs", jobs);
-        model.addAttribute("skills", skills);
-        model.addAttribute("employers", employers);
 
         return "list-jobs";
     }
